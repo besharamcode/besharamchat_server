@@ -5,7 +5,10 @@ import express from "express";
 export const app = express();
 export const httpServer = createServer(app);
 export const io = new Server(httpServer, {
-  cors: { origin: ["http://localhost:5173"], Credential: true },
+  cors: {
+    origin: ["http://localhost:5173", "https://besharamchat.netlify.app"],
+    Credential: true,
+  },
 });
 
 export const usersSocketMap = {};
