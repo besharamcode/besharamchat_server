@@ -17,7 +17,7 @@ const __dirname = path.dirname(__filename);
 const port = process.env.PORT || 8000;
 
 const corsOptions = {
-  origin: ["http://localhost:5173"],
+  origin: ["http://localhost:5173","https://besharamchat.netlify.app"],
   Credential: true,
 };
 
