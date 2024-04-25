@@ -63,7 +63,13 @@ export const sendRequest = asyncHandler(async (req, res) => {
       io.to(usersSocketMap[friendId]).emit("request", requestData);
       return res
         .status(200)
-        .json(new ApiResponse(200, {}, "Request Sent Successfully!"));
+        .json(
+          new ApiResponse(
+            200,
+            { request: requestData },
+            "Request Sent Successfully!"
+          )
+        );
     }
   }
 });

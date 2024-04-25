@@ -21,12 +21,20 @@ export const fetchUser = asyncHandler(async (req, res) => {
 
 export const someUsers = asyncHandler(async (req, res) => {
   const userId = new mongoose.Types.ObjectId(req.user);
+  const userChatWith = await Chat.find({
+    members: userId,
+  });
+
+  const friendsId = userChatWith
+    .map((chat) => chat.members)
+    .flat()
+    .filter((member) => member.toString() !== userId);
 
   const users = await User.aggregate([
     {
       $match: {
         _id: {
-          $nin: [userId],
+          $nin: [userId, ...friendsId],
         },
       },
     },
