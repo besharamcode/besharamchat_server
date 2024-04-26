@@ -1,11 +1,13 @@
 import express from "express";
 import { errorHandler } from "../utils/errorHandler.js";
 import { authUser } from "../middlewares/authUser.js";
-import { getChats, getMessages, sendMessage } from "../controllers/chat.controllers.js";
+import { getChat, getChats, getMessages, sendMessage } from "../controllers/chat.controllers.js";
 
 const router = express.Router();
 
 router.route("/fetchchats").get(authUser, getChats);
+
+router.route("/fetchchat/:chatId").get(authUser, getChat);
 
 router.route("/sendmessage/:senderId").post(authUser, sendMessage);
 

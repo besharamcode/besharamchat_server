@@ -167,3 +167,94 @@ export const getChats = asyncHandler(async (req, res) => {
       )
     );
 });
+
+export const getChat = asyncHandler(async (req, res) => {
+  const { chatId } = req.params;
+  if (chatId.length < 1) {
+    throw new ApiError(400, "Please enter valid chatId!");
+  }
+
+  const userChat = await Chat.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(chatId),
+      },
+    },
+    {
+      $lookup: {
+        from: "messages", // Collection name of your messages
+        let: { chatId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $eq: ["$chatId", "$$chatId"] },
+            },
+          },
+          {
+            $sort: { createdAt: -1 }, // Sort messages in descending order of createdAt to get the latest one
+          },
+          {
+            $limit: 1, // Limit to retrieve only the latest message
+          },
+          {
+            $project: {
+              _id: 0,
+              message: 1,
+              senderId: 1,
+            },
+          },
+        ],
+        as: "latestMessage",
+      },
+    },
+  ]);
+
+  if (userChat.length < 1) {
+    throw new ApiError(404, "Chat not found!");
+  }
+
+  // Additional processing to add avatar and last message to each chat
+  const processedChat = await Promise.all(
+    userChat.map(async (chat) => {
+      const chatMembers = await User.find(
+        { _id: { $in: chat.members } },
+        { avatar: 1, fullname: 1, username: 1 }
+      ); // Fetch avatars of chat members
+      const lastMessage =
+        chat.latestMessage.length > 0 ? chat.latestMessage[0] : null; // Get last message, if any
+
+      return {
+        chatId: chat._id,
+        isGroup: chat.group,
+        avatar: chat.group
+          ? chat.avatar
+          : chatMembers.find((member) => member._id.toString() !== req.user)
+              ?.avatar,
+        fullname: chatMembers.find(
+          (member) => member._id.toString() !== req.user
+        )?.fullname,
+        username: chatMembers.find(
+          (member) => member._id.toString() !== req.user
+        )?.username,
+        groupName: chat.group ? chat.groupName : null,
+        lastMessage: lastMessage
+          ? {
+              message: lastMessage.message,
+              senderId: lastMessage.senderId,
+              createdAt: lastMessage.createdAt,
+            }
+          : null,
+      };
+    })
+  );
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { chat: processedChat },
+        "Chat fetched successfully!"
+      )
+    );
+});
