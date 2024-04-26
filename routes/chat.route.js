@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.route("/fetchchats").get(authUser, getChats);
 
-router.route("/chat/:chatId").get(authUser, getChat);
+router.route("/getchat/:chatId").get(authUser, getChat);
 
 router.route("/sendmessage/:senderId").post(authUser, sendMessage);
 
