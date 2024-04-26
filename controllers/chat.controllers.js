@@ -253,7 +253,7 @@ export const getChat = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        { chat: processedChat },
+        { chat: processedChat[0] },
         "Chat fetched successfully!"
       )
     );
