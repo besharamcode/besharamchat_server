@@ -6,7 +6,7 @@ export const app = express();
 export const httpServer = createServer(app);
 export const io = new Server(httpServer, {
   cors: {
-    origin: ["http://localhost:5173", "https://besharamchat.netlify.app","https://chat.besharamcode.in"],
+    origin: ["http://localhost:5173", "https://chat.besharamcode.in"],
     Credential: true,
   },
 });
