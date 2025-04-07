@@ -4,7 +4,11 @@ import express from "express";
 
 export const app = express();
 export const httpServer = createServer(app);
-export const io = new Server(httpServer);
+export const io = new Server(httpServer, {
+  origin: "https://chat.besharamcode.in",
+  methods: ["GET", "POST", "OPTIONS"],
+  credentials: true, // if you're using cookies or auth headers
+});
 
 export const usersSocketMap = {};
 
