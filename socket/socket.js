@@ -4,12 +4,7 @@ import express from "express";
 
 export const app = express();
 export const httpServer = createServer(app);
-export const io = new Server(httpServer, {
-  cors: {
-    origin: ["http://localhost:5173", "https://chat.besharamcode.in"],
-    Credential: true,
-  },
-});
+export const io = new Server(httpServer);
 
 export const usersSocketMap = {};
 
